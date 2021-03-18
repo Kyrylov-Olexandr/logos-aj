@@ -4,6 +4,7 @@ import model.Adress;
 import model.Animal;
 import model.User;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import service.UserService;
 
@@ -12,13 +13,15 @@ import java.util.ArrayList;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class UserServiceImplTest {
-    private final UserService userService;
-    private final User user;
-    private final Adress adress;
-    private final Animal animal;
+    private UserService userService;
+    private User user;
+    private Adress adress;
+    private Animal animal;
     private String newName;
 
-    public UserServiceImplTest() {
+
+    @BeforeEach
+    void init () {
         userService = new UserServiceImpl();
         user = new User();
         user.setAnimals(new ArrayList<>());
@@ -30,10 +33,8 @@ public class UserServiceImplTest {
                 .house("74")
                 .apart("2")
                 .build();
-       animal = new Animal("Rick", "Dog", 5);
-       newName = "Bob Marley";
-
-
+        animal = new Animal("Rick", "Dog", 5);
+        newName = "Bob Marley";
     }
     @Test
     public void isAdultTest () {
