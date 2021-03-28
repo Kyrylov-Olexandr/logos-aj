@@ -1,8 +1,6 @@
 package com.kyrylov.web_app.dao.impl;
 
-import com.kyrylov.web_app.dao.BucketDao;
 import com.kyrylov.web_app.dao.ProductDao;
-import com.kyrylov.web_app.model.BucketModel;
 import com.kyrylov.web_app.model.ProductModel;
 import lombok.SneakyThrows;
 
@@ -26,7 +24,6 @@ public class DefaultProductDao implements ProductDao {
             "on product.id = bucket_product.product_id " +
             "where bucket_product.bucket_id = ?;";
 
-    private final BucketDao bucketDao = new DefaultBucketDao();
 
     @SneakyThrows
     @Override
@@ -45,7 +42,6 @@ public class DefaultProductDao implements ProductDao {
                         .name(resultSet.getString("name"))
                         .description(resultSet.getString("description"))
                         .price(BigDecimal.valueOf(resultSet.getDouble("price")))
-                        .buckets(getAllBucketsByProductId(id))
                         .build();
             }
         } finally {
@@ -111,7 +107,6 @@ public class DefaultProductDao implements ProductDao {
                         .name(resultSet.getString("name"))
                         .description(resultSet.getString("description"))
                         .price(BigDecimal.valueOf(resultSet.getLong("price")))
-                        .buckets(getAllBucketsByProductId(productId))
                         .build());
             }
             return result;
@@ -136,7 +131,6 @@ public class DefaultProductDao implements ProductDao {
                         .name(resultSet.getString("name"))
                         .description(resultSet.getString("description"))
                         .price(resultSet.getBigDecimal("price"))
-                        .buckets(getAllBucketsByProductId(productId))
                         .build());
             }
         } finally {
@@ -147,7 +141,4 @@ public class DefaultProductDao implements ProductDao {
         return result;
     }
 
-    private List<BucketModel> getAllBucketsByProductId(long id) {
-        return bucketDao.getAllByProductId(id);
-    }
 }

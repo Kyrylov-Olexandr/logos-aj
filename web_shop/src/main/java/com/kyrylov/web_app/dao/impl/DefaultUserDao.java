@@ -21,8 +21,9 @@ public class DefaultUserDao implements UserDao {
     private static final String CREATE_QUERY = "insert into user(id, email, password, first_name, last_name, role) value (?, ?, ?, ?, ?, ?);";
     private static final String UPDATE_BY_ID_QUERY = "update user set id = ?, email = ?, password = ?, first_name = ?, last_name = ?, role = ? where id = ?;";
     private static final String GET_ALL_QUERY = "select * from user;";
+    private static final String GET_BY_EMAIL_QUERY = "select * from user where email = ?";
 
-    private final BucketDao bucketDao = new DefaultBucketDao();
+
 
     @SneakyThrows
     @Override
@@ -43,7 +44,6 @@ public class DefaultUserDao implements UserDao {
                         .firstName(resultSet.getString("first_name"))
                         .lastName(resultSet.getString("last_name"))
                         .role(resultSet.getString("role"))
-                        .bucketModel(getBucketByUserId(id))
                         .build();
             }
         } finally {
@@ -53,6 +53,36 @@ public class DefaultUserDao implements UserDao {
         }
         return result;
     }
+    @SneakyThrows
+    @Override
+    public UserModel getByEmail(String email) {
+        ResultSet resultSet = null;
+        UserModel result = null;
+        try(Connection connection = getConnection();
+            PreparedStatement statement = connection.prepareStatement(GET_BY_EMAIL_QUERY);
+        ) {
+            statement.setString(1, email);
+            resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                result = UserModel
+                        .builder()
+                        .id(resultSet.getLong("id"))
+                        .email(resultSet.getString("email"))
+                        .password(resultSet.getString("password"))
+                        .firstName(resultSet.getString("first_name"))
+                        .lastName(resultSet.getString("last_name"))
+                        .role(resultSet.getString("role"))
+                        .build();
+            }
+        } finally {
+            if (resultSet != null) {
+                resultSet.close();
+            }
+        }
+        return result;
+
+    }
+
     @SneakyThrows
     @Override
     public boolean deleteById(long id) {
@@ -66,7 +96,7 @@ public class DefaultUserDao implements UserDao {
 
     @SneakyThrows
     @Override
-    public boolean create(UserModel userModel) {
+    public boolean save(UserModel userModel) {
         try(Connection connection = getConnection();
             PreparedStatement statement = connection.prepareStatement(CREATE_QUERY);
         ) {
@@ -114,14 +144,9 @@ public class DefaultUserDao implements UserDao {
                         .firstName(resultSet.getString("first_name"))
                         .lastName(resultSet.getString("last_name"))
                         .role(resultSet.getString("role"))
-                        .bucketModel(getBucketByUserId(userId))
                         .build());
             }
             return result;
         }
-    }
-
-    private BucketModel getBucketByUserId(long userId) {
-        return bucketDao.getById(userId);
     }
 }

@@ -8,12 +8,15 @@ import java.util.List;
 public interface UserDao {
     UserModel getById(long id);
 
+    UserModel getByEmail(String email);
+
     boolean deleteById(long id);
 
-    boolean create(UserModel userModel);
+    boolean save(UserModel userModel);
 
     boolean update(long id, UserModel userModel);
 
     List<UserModel> getAll();
+
 
 }

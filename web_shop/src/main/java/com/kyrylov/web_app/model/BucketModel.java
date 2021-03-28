@@ -11,6 +11,5 @@ import java.util.List;
 public class BucketModel {
     private long id;
     private Timestamp createdDate;
-    private UserModel userModel;
     private List<ProductModel> products;
 }

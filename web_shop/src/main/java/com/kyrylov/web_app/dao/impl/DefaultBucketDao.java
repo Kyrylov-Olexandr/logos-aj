@@ -25,8 +25,6 @@ public class DefaultBucketDao implements BucketDao {
             "on bucket.id = bucket_product.bucket_id " +
             "where bucket_project.project_id = ?;";
 
-    private final ProductDao productDao = new DefaultProductDao();
-    private final UserDao userDao = new DefaultUserDao();
 
     @SneakyThrows
     @Override
@@ -39,13 +37,10 @@ public class DefaultBucketDao implements BucketDao {
             statement.setLong(1, id);
             resultSet = statement.executeQuery();
             while (resultSet.next()) {
-                result = BucketModel
-                        .builder()
-                        .id(id)
-                        .createdDate(resultSet.getTimestamp("created_date"))
-                        .products(getAllProductsByBucketId(id))
-                        .userModel(getUserByBucketId(id))
-                        .build();
+                result = BucketModel.builder()
+                                    .id(id)
+                                    .createdDate(resultSet.getTimestamp("created_date"))
+                                    .build();
             }
         } finally {
             if (resultSet != null) {
@@ -100,13 +95,10 @@ public class DefaultBucketDao implements BucketDao {
         ) {
             while (resultSet.next()) {
                 long bucketId = resultSet.getLong("id");
-                result.add(BucketModel
-                        .builder()
-                        .id(bucketId)
-                        .createdDate(resultSet.getTimestamp("created_date"))
-                        .products(getAllProductsByBucketId(resultSet.getLong("id")))
-                        .userModel(getUserByBucketId(bucketId))
-                        .build());
+                result.add(BucketModel.builder()
+                                      .id(bucketId)
+                                      .createdDate(resultSet.getTimestamp("created_date"))
+                                      .build());
             }
             return result;
         }
@@ -124,13 +116,10 @@ public class DefaultBucketDao implements BucketDao {
             resultSet = statement.executeQuery();
             while (resultSet.next()) {
                 long bucketId = resultSet.getLong("id");
-                result.add(BucketModel
-                        .builder()
-                        .id(bucketId)
-                        .createdDate(resultSet.getTimestamp("created_date"))
-                        .products(getAllProductsByBucketId(bucketId))
-                        .userModel(getUserByBucketId(bucketId))
-                        .build());
+                result.add(BucketModel.builder()
+                                      .id(bucketId)
+                                      .createdDate(resultSet.getTimestamp("created_date"))
+                                      .build());
             }
         } finally {
             if (resultSet != null) {
@@ -140,12 +129,5 @@ public class DefaultBucketDao implements BucketDao {
         return result;
     }
 
-    private List<ProductModel> getAllProductsByBucketId(long id) {
-        return productDao.getAllByBucketId(id);
-    }
-
-    private UserModel getUserByBucketId(long id) {
-        return userDao.getById(id);
-    }
 
 }
